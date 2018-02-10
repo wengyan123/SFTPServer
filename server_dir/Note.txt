@@ -1,0 +1,33 @@
+453221, for Apach, we backup NGM/OP5 first, then try to upgrade, and test. Long guo follow up, Bind issue, weng yan follow up, make MOP first and review together. convert to the incident to change first.
+453493, to be reviewed with Weng yan, Weng yan need to guide each Application owner on how to send app log to sys log server. - ELK
+
+For remote access control log check  – Tanlei
+			- define audit rules, like users, source IP range, etc - Tanlei
+			- create script - Weng yan
+
+check suspect & unsuccessful login via aureport on each server
+			crontab to generate report every monday
+
+
+
+
+Weekly check:
+1.	Create ticket to add jump server in L1, in dedicated vlan  - 
+Wang chao to create ticket, Target date Feb 7
+         Tanlei to create apply flow thru ASS…security website…etc, Feb 9
+         Longguo to create VM for jump server Feb 12
+
+2.  For remote access control log check  – Tanlei
+                                             - define audit rules, like users, source IP range, etc – Tanlei target date: Feb 12
+                                             - create script - Weng yan  Feb 20
+3.  NGM warning need to be refined and reviewed, create script to filter NGM report to highlight the cases need to creat stim ticket – jacky   Feb 23
+4.  Check suspect & unsuccessful login via aureport on random selected servers - chen zhuo 
+                                             - deploy crontab to generate aureport every monday   - weng yan 
+												Weng yan to follow up on Syslog format issue, give solution by  Feb 14
+                                             - random select some servers to check of this week   - Tanlei 
+                                             
+Daily check:
+1.	check AD log - not yet implemented
+centralize the log to syslog first, Weng yan to follow up, target date: Feb 23
+2.	check any sensitive data transfer through ACF, to subscribe notification on Allynis portal - chen zhuo
+Feb 9
