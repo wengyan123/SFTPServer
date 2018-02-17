@@ -1,8 +1,9 @@
 import os
+
 from paramiko import SFTPServerInterface, SFTPServer, SFTPAttributes, \
     SFTPHandle, SFTP_OK
 
-from Settings import SERVER_ROOT_DIR
+from sftpServer.Settings import SERVER_ROOT_DIR
 
 
 class SubSFTPHandle(SFTPHandle):

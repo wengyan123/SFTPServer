@@ -1,13 +1,14 @@
-import sys
-import hashlib
-import uuid
-import getpass
 import argparse
-import textwrap
-import paramiko
 import base64
+import getpass
+import hashlib
+import sys
+import textwrap
+import uuid
 
-from Settings import PASSWD
+import paramiko
+
+from sftpServer.Settings import PASSWD
 
 
 class Account:

@@ -1,4 +1,5 @@
 import logging
+import json
 
 
 def createLogger(debug):
@@ -10,3 +11,8 @@ def createLogger(debug):
                             format='%(asctime)s %(name)s %(levelname)s %(message)s')
     _logger = logging.getLogger('SFTPServer')
     return _logger
+
+
+def loadConfig(config_file):
+    config = json.load(config_file)
+    return config

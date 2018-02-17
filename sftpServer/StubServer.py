@@ -1,8 +1,9 @@
-import threading
 import logging
+import threading
+
 from paramiko import ServerInterface, AUTH_SUCCESSFUL, OPEN_SUCCEEDED, AUTH_FAILED, OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
 
-from Account import Account
+from sftpServer.Account import Account
 
 
 class StubServer(ServerInterface):

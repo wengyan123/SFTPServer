@@ -1,14 +1,15 @@
-import time
-import socket
 import argparse
+import socket
 import sys
 import textwrap
+import time
+
 import paramiko
 
-from StubServer import StubServer
-from SubSFTPServer import SubSFTPServer
-from Utils import createLogger
-from Settings import SERVER_HOST, SERVER_PORT, SERVER_BACKLOG, SERVER_KEYFILE
+from sftpServer.settings import SERVER_HOST, SERVER_PORT, SERVER_BACKLOG, SERVER_KEYFILE
+from sftpServer.StubServer import StubServer
+from sftpServer.SubSFTPServer import SubSFTPServer
+from sftpServer.helpers import createLogger
 
 # global variables
 logger = None
@@ -18,6 +19,8 @@ def startServer(host, port, keyfile, level):
     # set paramiko logging level
     #paramiko_level = getattr(paramiko.common, level)
     #paramiko.common.logging.basicConfig(level=paramiko_level)
+    global logger
+    logger = createLogger(debug=True)
 
     logger.info(" Starting SFTP Server on " + str(host) + ":" + str(port))
     # start a socket listener
@@ -63,8 +66,6 @@ def startServer(host, port, keyfile, level):
 
 
 def main():
-    global logger
-    logger = createLogger(debug=True)
 
     usage = """\
     usage: sftpserver [options]

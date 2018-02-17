@@ -1,0 +1,12 @@
+{
+  "server":{
+    "host": "localhost",
+    "port": "3373",
+    "rootDir": "server_dir"
+  },
+  "client":{
+    "pubKeys":{
+      "wengyan": "clientKyes/wengyan_rsa.pub"
+    }
+  }
+}
