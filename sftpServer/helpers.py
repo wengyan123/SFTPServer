@@ -1,6 +1,6 @@
 import logging
 import json
-
+import os
 
 def createLogger(debug):
     if debug:
@@ -14,5 +14,18 @@ def createLogger(debug):
 
 
 def loadConfig(config_file):
-    config = json.load(config_file)
-    return config
+    with open(config_file, 'r') as fp:
+        config = json.load(fp)
+        return config
+
+
+def setServerRootDir(value):
+    settings = os.path.dirname(os.path.abspath(__file__)) + '/settings.py'
+    settings_list = []
+    with open(settings, 'r+') as frw:
+        for line in frw:
+            if line.startswith('SERVER_ROOT_DIR'):
+                line = "SERVER_ROOT_DIR = '" + value + "'"
+            settings_list.append(line)
+        frw.seek(0)
+        frw.writelines(settings_list)

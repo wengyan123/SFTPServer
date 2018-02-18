@@ -1,17 +1,16 @@
-import argparse
 import base64
 import getpass
 import hashlib
 import sys
-import textwrap
+import os
 import uuid
-
 import paramiko
 
-from sftpServer.Settings import PASSWD
+from sftpServer.settings import PASSWD
 
 
 class Account:
+    passwd = os.path.dirname(os.path.abspath(__file__)) + '/' + PASSWD
 
     def hashPasswd(self, user_password):
         # uuid is used to generate a random number
@@ -26,7 +25,7 @@ class Account:
 
 
     def checkUserExsistence(self, username):
-        with open(PASSWD, 'r') as fr:
+        with open(self.passwd, 'r') as fr:
             for line in fr:
                 _username = line.split(':')[0]
                 if _username == username:
@@ -45,7 +44,7 @@ class Account:
         user_password = getpass.getpass("Please Enter a Password: ")
         hashed_password, salt = self.hashPasswd(user_password)
 
-        with open(PASSWD, 'a') as fw:
+        with open(self.passwd, 'a') as fw:
             fw.write(username + ":" + hashed_password + ":" + salt + "\n")
         print("Account: " + username + " created successfully.")
 
@@ -57,18 +56,18 @@ class Account:
             exit(1)
 
         output = []
-        with open(PASSWD, 'r') as fr:
+        with open(self.passwd, 'r+') as frw:
             for line in fr:
                 _username = line.strip('\n').split(':')[0]
                 if _username != username_to_del:
                     output.append(line)
-        with open(PASSWD, 'w') as fw:
-            fw.writelines(output)
+            frw.seek(0)
+            frw.writelines(output)
         print("Account: " + username_to_del + "deleted successfully.")
 
 
     def verifyAccountPwd(self, username, user_password):
-        with open(PASSWD, 'r') as fr:
+        with open(self.passwd, 'r') as fr:
             for line in fr:
                 _username, _hashed_password, _salt = line.strip('\n').split(':')
                 if _username == username and self.checkPasswd(_hashed_password, _salt, user_password):
@@ -108,37 +107,3 @@ class Account:
             print("Verify Account password successfully.")
         else:
             print("Verify Account password failed.")
-
-
-def main():
-
-    usage = """usage: python Account.py [options]
-    -C/--create: to create an account
-    -D/--delete: to delete an account
-    -V/--verify: to verify an account's password\
-    """
-    if len(sys.argv) < 2:
-        print(usage)
-
-    parser = argparse.ArgumentParser(usage=textwrap.dedent(usage))
-    parser.add_argument('-C', '--create', dest='create', action='store_true', default=False)
-    parser.add_argument('-D', '--delete', dest='delete', action='store_true', default=False)
-    parser.add_argument('-V', '--verify', dest='verify', action='store_true', default=False)
-    args = parser.parse_args()
-
-    if args.create:
-        account = Account()
-        account.createAccount()
-        exit(0)
-    if args.delete:
-        account = Account()
-        account.deleteAccount()
-        exit(0)
-    if args.verify:
-        account = Account()
-        account.verifyAccount()
-        exit(0)
-
-
-if __name__ == '__main__':
-    main()

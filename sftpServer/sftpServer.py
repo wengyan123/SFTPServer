@@ -1,12 +1,11 @@
-import argparse
 import socket
 import sys
-import textwrap
 import time
+import os
 
 import paramiko
 
-from sftpServer.settings import SERVER_HOST, SERVER_PORT, SERVER_BACKLOG, SERVER_KEYFILE
+from sftpServer.settings import SERVER_BACKLOG, SERVER_KEYFILE
 from sftpServer.StubServer import StubServer
 from sftpServer.SubSFTPServer import SubSFTPServer
 from sftpServer.helpers import createLogger
@@ -15,12 +14,12 @@ from sftpServer.helpers import createLogger
 logger = None
 
 
-def startServer(host, port, keyfile, level):
+def startServer(host, port, log_level):
     # set paramiko logging level
     #paramiko_level = getattr(paramiko.common, level)
     #paramiko.common.logging.basicConfig(level=paramiko_level)
     global logger
-    logger = createLogger(debug=True)
+    logger = createLogger(debug=log_level)
 
     logger.info(" Starting SFTP Server on " + str(host) + ":" + str(port))
     # start a socket listener
@@ -30,7 +29,7 @@ def startServer(host, port, keyfile, level):
         # without waiting for its natural timeout to expire.
         # https://docs.python.org/2/library/socket.html
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-        server_socket.bind((host, port))
+        server_socket.bind((host, int(port)))
         server_socket.listen(SERVER_BACKLOG)
         logger.info(" Listen for connection...")
     except Exception as e:
@@ -43,7 +42,8 @@ def startServer(host, port, keyfile, level):
 
         # When behaving as a server, the host key is used to sign certain packets during the SSH2 negotiation,
         # so that the client can trust that we are who we say we are.
-        host_key = paramiko.RSAKey.from_private_key_file(keyfile)
+        server_key = os.path.dirname(os.path.abspath(__file__)) + '/' + SERVER_KEYFILE
+        host_key = paramiko.RSAKey.from_private_key_file(server_key)
         transport = paramiko.Transport(conn)
         transport.add_server_key(host_key)
         # Set the handler class for a subsystem in server mode.
@@ -63,40 +63,3 @@ def startServer(host, port, keyfile, level):
         channel = transport.accept()
         while transport.is_active():
             time.sleep(1)
-
-
-def main():
-
-    usage = """\
-    usage: sftpserver [options]
-    -k/--keyfile should be specified
-    """
-    parser = argparse.ArgumentParser(usage=textwrap.dedent(usage))
-    parser.add_argument(
-        '--host', dest='host', default=SERVER_HOST,
-        help='listen on HOST [default: %(default)s]'
-    )
-    parser.add_argument(
-        '-p', '--port', dest='port', type=int, default=SERVER_PORT,
-        help='listen on PORT [default: %(default)d]'
-    )
-    parser.add_argument(
-        '-l', '--level', dest='level', default='DEBUG',
-        help='Debug level: WARNING, INFO, DEBUG [default: %(default)s]'
-    )
-    parser.add_argument(
-        '-k', '--keyfile', dest='keyfile', metavar='FILE', default=SERVER_KEYFILE,
-        help='Path to private key, for example /tmp/test_rsa.key'
-    )
-
-    args = parser.parse_args()
-
-    if args.keyfile is None:
-        parser.print_help()
-        sys.exit(-1)
-
-    startServer(args.host, args.port, args.keyfile, args.level)
-
-
-if __name__ == '__main__':
-    main()

@@ -2,8 +2,7 @@ import os
 
 from paramiko import SFTPServerInterface, SFTPServer, SFTPAttributes, \
     SFTPHandle, SFTP_OK
-
-from sftpServer.Settings import SERVER_ROOT_DIR
+from sftpServer.settings import SERVER_ROOT_DIR
 
 
 class SubSFTPHandle(SFTPHandle):
@@ -26,8 +25,7 @@ class SubSFTPHandle(SFTPHandle):
 class SubSFTPServer(SFTPServerInterface):
     # assume current folder is a fine root
     # (the tests always create and eventualy delete a subfolder, so there shouldn't be any mess)
-    #ROOT = os.getcwd()
-    ROOT = os.getcwd() + '/' + SERVER_ROOT_DIR
+    ROOT = SERVER_ROOT_DIR
 
     def _realpath(self, path):
         return self.ROOT + self.canonicalize(path)
