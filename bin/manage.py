@@ -4,14 +4,17 @@ import textwrap
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from sftpServer import sftpServer, Account, helpers
+from sftpServer import sftpServer, helpers
+from sftpServer.Account import Account
 
 
 def main():
 
     usage = """\
     Usage: python manage.py [action]
-        1. start server: manage.py startserver -Con/--config [config file]
+        1. start server: manage.py startserver
+            -Con/--config: indicate server config file
+            -debug: enable debug logs
         2. manage account: manage.py account
             -C/--create: to create an account
             -D/--delete: to delete an account
@@ -38,6 +41,19 @@ def main():
         log_level = args.debug
         sftpServer.startServer(host, port, log_level)
     # manage account
+    if args.action == 'account':
+        if args.create:
+            account = Account()
+            account.createAccount()
+            exit(0)
+        if args.delete:
+            account = Account()
+            account.deleteAccount()
+            exit(0)
+        if args.verify:
+            account = Account()
+            account.verifyAccount()
+            exit(0)
 
 
 if __name__ == '__main__':

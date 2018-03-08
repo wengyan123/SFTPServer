@@ -6,11 +6,11 @@ import os
 transport = paramiko.Transport(('localhost', 3373))
 
 # password auth
-transport.connect(username='wengyan', password='123456')
+#transport.connect(username='wengyan', password='123456')
 
 # public key auth
-#key = paramiko.RSAKey.from_private_key_file('client_dir/clientKeys/wengyan_rsa')
-#transport.connect(username='wengyan', pkey=key)
+key = paramiko.RSAKey.from_private_key_file('client_dir/clientKeys/wengyan_rsa')
+transport.connect(username='wengyan', pkey=key)
 
 # fork stfp client
 sftp = paramiko.SFTPClient.from_transport(transport)

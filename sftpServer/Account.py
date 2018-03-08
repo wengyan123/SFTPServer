@@ -5,12 +5,19 @@ import sys
 import os
 import uuid
 import paramiko
+import logging
 
 from sftpServer.settings import PASSWD
 
 
 class Account:
     passwd = os.path.dirname(os.path.abspath(__file__)) + '/' + PASSWD
+    client_pubkey_dir = os.path.dirname(os.path.abspath(__file__)) + '/secret/clientKeys'
+
+
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
 
     def hashPasswd(self, user_password):
         # uuid is used to generate a random number
@@ -54,16 +61,15 @@ class Account:
         if self.checkUserExsistence(username_to_del) is False:
             print("Username does not exist!")
             exit(1)
-
         output = []
-        with open(self.passwd, 'r+') as frw:
+        with open(self.passwd, 'r') as fr:
             for line in fr:
                 _username = line.strip('\n').split(':')[0]
                 if _username != username_to_del:
                     output.append(line)
-            frw.seek(0)
-            frw.writelines(output)
-        print("Account: " + username_to_del + "deleted successfully.")
+        with open(self.passwd, 'w') as fw:
+            fw.writelines(output)
+        print("Account: " + username_to_del + " deleted successfully.")
 
 
     def verifyAccountPwd(self, username, user_password):
@@ -76,7 +82,7 @@ class Account:
 
 
     def verifyAccountPubKey(self, username, pubkey):
-        pubkey_file = 'secret/clientKeys/' + username + '_rsa.pub'
+        pubkey_file = self.client_pubkey_dir.rstrip('/') + '/' + username + '_rsa.pub'
         try:
             with open(pubkey_file, 'r') as fp:
                 for rawline in fp:
@@ -91,6 +97,7 @@ class Account:
                     if pubkey == k:
                         return True
         except Exception as e:
+            self.logger.error(e)
             return False
 
 
@@ -104,6 +111,6 @@ class Account:
             sys.exit(1)
         user_password = getpass.getpass("Please Enter a Password: ")
         if self.verifyAccountPwd(username, user_password):
-            print("Verify Account password successfully.")
+            print("Verify Account " + username + " password successfully.")
         else:
-            print("Verify Account password failed.")
+            print("Verify Account " + username + " password failed.")

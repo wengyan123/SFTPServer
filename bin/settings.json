@@ -3,10 +3,5 @@
     "host": "localhost",
     "port": "3373",
     "root_dir": "/Users/wengyan/Dev/python/SFTPServer/tests/server_dir"
-  },
-  "client":{
-    "pubKeys":{
-      "wengyan": "clientKyes/wengyan_rsa.pub"
-    }
   }
 }
